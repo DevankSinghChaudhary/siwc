@@ -1,20 +1,7 @@
 from __future__ import annotations
 
-import base64
-import hashlib
-import secrets
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs, urlparse
-
-code_verifier = secrets.token_urlsafe(43)
-code_challenge = (
-    base64.urlsafe_b64encode(hashlib.sha256(code_verifier.encode("ascii")).digest())
-    .rstrip(b"=")
-    .decode("ascii")
-)
-CCM = "S256"
-ADDRESS = "127.0.0.1"
-PORT = 0
 
 
 class CallbackHandler(BaseHTTPRequestHandler):
@@ -39,7 +26,7 @@ class CallbackHandler(BaseHTTPRequestHandler):
             self.send_error(404, "Not Found")
 
 
-def CreateCallbackServer():
+def CreateCallbackServer(ADDRESS, PORT):
     server = HTTPServer((ADDRESS, PORT), CallbackHandler)
-    # server.callback_result = None
+    server.callback_result = None
     return server
